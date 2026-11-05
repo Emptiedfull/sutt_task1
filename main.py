@@ -18,9 +18,11 @@ class App:
 
     def add_request(self):
         name = prompt("Name: ",val_present)
-        dest = prompt("Destination Delhi/Jaipur): ",val_dest)
+        dest = prompt("Destination (Delhi/Jaipur): ",val_dest)
         slot = prompt("Timeslot (Morning/Afternoon/Evening/Night): ",val_slot)
         year = prompt("Year (1-5):",val_year)
+
+        print("year",year,name)
 
         req = RideRequest(name,dest,slot,year,self.inc)
         self.inc += 1
@@ -35,6 +37,12 @@ class App:
         for r in self.waiting:
             print(" ",r)
 
+        print("-> Cabs")
+        if not self.cabs:
+            print("None")
+        for cab in self.cabs:
+            print(" ",cab)
+
     def menu_ops(self):
         return [
             ("Request Ride", self.add_request),
@@ -42,28 +50,37 @@ class App:
         ]
 
     def run(self):
-         opts = self.menu_ops()
+        opts = self.menu_ops()
         
-                    print(" ---Welcome---- ")
+        print(" ---Welcome---- ")
         
-                    for i,(label,_) in enumerate(opts,1):
-                        print(f"{i}. {label}")
-                    quit_num = i + 1
-                    print(f"\n{quit_num}. Quit \n")
+        for i,(label,_) in enumerate(opts,1):
+            print(f"{i}. {label}")
+        quit_num = i + 1
+        print(f"\n{quit_num}. Quit \n")
+
         while True:
            
 
             choice = input("> ").strip()
 
-            try: 
-                choice = int(choice)
+            if not choice.isdigit():
+                print("Please enter a number")
+                continue
 
+            choice = int(choice)
 
             if choice == quit_num:
                 print("Quitting")
                 return
 
-            if choice.isdigit() and 1 <= int(choice) <=  
+            if 1 <= int(choice) <=  len(opts):
+                opts[choice - 1][1]()
+            else:
+                print("Please choose a valid menu option")
+                continue
+                 
+
 
 App().run()
             

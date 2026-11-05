@@ -7,13 +7,13 @@ class RideRequest:
         self.name = val_present(name)
         self.dest = val_dest(dest)
         self.time_slot = val_slot(time_slot)
-        self.year = val_year(year)
+        self.year = int(val_year(year))
         self.inc = inc 
         self.timestamp = timestamp or datetime.now().isoformat(timespec="seconds")
         pass
 
     def __str__(self):
-        return f"#{self.inc} {self.name} (Year {self.year}) → {self.destination}, {self.time_slot}"
+        return f"#{self.inc} {self.name} (Year {self.year}) → {self.dest}, {self.time_slot}"
 
 class Cab: 
     def __init__(self,id,driver,seats,dest,time_slot,departed=False,passengers=None):
