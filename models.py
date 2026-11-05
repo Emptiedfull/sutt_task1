@@ -1,0 +1,32 @@
+
+from val import *
+from datetime import datetime
+
+class RideRequest: 
+    def __init__(self,name,dest,time_slot,year,inc,timestamp=None):
+        self.name = val_present(name)
+        self.dest = val_dest(dest)
+        self.time_slot = val_slot(time_slot)
+        self.year = val_year(year)
+        self.inc = inc 
+        self.timestamp = timestamp or datetime.now().isoformat(timespec="seconds")
+        pass
+
+    def __str__(self):
+        return f"#{self.inc} {self.name} (Year {self.year}) → {self.destination}, {self.time_slot}"
+
+class Cab: 
+    def __init__(self,id,driver,seats,dest,time_slot,departed=False,passengers=None):
+        self.id = val_present(id)
+        self.driver = val_present(driver)
+        self.seats = val_int_in_range(seats,1,4)
+        self.dest = val_dest(dest)
+        self.time_slot = val_slot(time_slot)
+        self.departed = departed
+        self.passengers = list(passengers or [])
+        if len(self.passengers) > seats:
+            ValError(f"passenger capacity exceeded, have {len(self.passengers)} need {seats}")
+
+    def __str__(self):
+        stat = "LEFT" if self.departed else "OPEN"
+        return (f"[{self.id}] {self.driver:<10} {self.destination}, {self.time_slot:<9} " f"{len(self.passengers)}/{self.seats}  {stat}")
