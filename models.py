@@ -12,6 +12,10 @@ class RideRequest:
         self.timestamp = timestamp or datetime.now().isoformat(timespec="seconds")
         pass
 
+    @property
+    def trip(self):
+        return (self.dest,self.time_slot)
+
     def __str__(self):
         return f"#{self.inc} {self.name} (Year {self.year}) → {self.dest}, {self.time_slot}"
 
@@ -29,4 +33,4 @@ class Cab:
 
     def __str__(self):
         stat = "LEFT" if self.departed else "OPEN"
-        return (f"[{self.id}] {self.driver:<10} {self.destination}, {self.time_slot:<9} " f"{len(self.passengers)}/{self.seats}  {stat}")
+        return (f"[{self.id}] {self.driver:<10} {self.dest}, {self.time_slot:<9} " f"{len(self.passengers)}/{self.seats}  {stat}")

@@ -14,7 +14,12 @@ def val_year(value):
     return val_int_in_range(value,1,5,"year")
 
 def val_int_in_range(value,min,max,label=None):
-    if not value.isdigit():
+
+    if type(value) == int:
+        if value in range(min,max+1):
+                return value
+
+    if not value.isdigit() :
         raise ValError(f"Invalid type for {label}")
     if int(value) in range(min,max+1):
         return value
@@ -24,13 +29,14 @@ def val_int_in_range(value,min,max,label=None):
 
 def val_dest(value):
     clean = value.strip().lower()
-    if clean in ["delhi","Jaipur"]:
+    if clean in ["delhi","jaipur"]:
         return str(clean.title())
     else:
-         raise ValError("Invalid Destination")
+         raise ValError(f"Invalid Destination,{clean}")
 
 def val_present(value,label = "name"): 
     x = value.strip()
     if not x: 
         raise ValError(f"The {label} cannot be empty/null")
     return x 
+

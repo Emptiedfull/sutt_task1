@@ -1,0 +1,7 @@
+[
+  {"id": "C1", "driver": "Ramesh",  "seats": 4, "destination": "Delhi",  "time_slot": "Morning"},
+  {"id": "C2", "driver": "Suresh",  "seats": 2, "destination": "Delhi",  "time_slot": "Morning"},
+  {"id": "C3", "driver": "Mahesh",  "seats": 4, "destination": "Jaipur", "time_slot": "Evening"},
+  {"id": "C4", "driver": "Dinesh",  "seats": 3, "destination": "Delhi",  "time_slot": "Night"},
+  {"id": "C5", "driver": "Rajesh",  "seats": 1, "destination": "Jaipur", "time_slot": "Afternoon"}
+]

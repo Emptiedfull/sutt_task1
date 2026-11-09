@@ -1,5 +1,8 @@
 from models import Cab,RideRequest 
 from val import ValError,val_present,val_dest,val_slot,val_year
+from loader import load_cabs
+from collections import defaultdict
+from queue import Queue
 
 def prompt(q,val):
     while True: 
@@ -12,9 +15,11 @@ def prompt(q,val):
 class App:
     def __init__(self):
         self.cabs = []
-        self.waiting = []
+        self.waiting = defaultdict(Queue)
         self.inc = 1
         pass
+
+    
 
     def add_request(self):
         name = prompt("Name: ",val_present)
@@ -22,11 +27,11 @@ class App:
         slot = prompt("Timeslot (Morning/Afternoon/Evening/Night): ",val_slot)
         year = prompt("Year (1-5):",val_year)
 
-        print("year",year,name)
 
         req = RideRequest(name,dest,slot,year,self.inc)
         self.inc += 1
         self.waiting.append(req)
+        self.waiting[req.trip]
 
         print(f"added {req}")
 
@@ -50,6 +55,7 @@ class App:
         ]
 
     def run(self):
+        self.cabs = load_cabs()
         opts = self.menu_ops()
         
         print(" ---Welcome---- ")
