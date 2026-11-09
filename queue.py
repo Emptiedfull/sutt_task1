@@ -1,23 +1,24 @@
-from collections import deque
-from itertools import islice
 
-class Ride_queue:
+import heapq
+
+
+class Old_queue: 
     def __init__(self):
-        self.items = deque()
+        self.heap = []
 
     def push(self,item):
-        self.items.append(item)
+        heapq.heappush(self.heap,(-item.year,item.inc,item))
 
     def preview(self,n):
-         return list(islice(self.items, n))
+        return [entry[2] for entry in heapq.nsmallest(n, self.heap)]
 
-    def pop(self,n):
-         return [self._items.popleft() for _ in range(min(n, len(self.items)))]
+    def pop(self, n):
+        return [heapq.heappop(self.heap)[2] for _ in range(min(n, len(self.heap)))]
 
     def list(self):
-        return list(self.items)
+        return [entry[2] for entry in sorted(self.heap)]
 
     def __len__(self):
-        return len(list(self.items))
+        return len(self.heap)
 
 

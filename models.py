@@ -23,13 +23,13 @@ class Cab:
     def __init__(self,id,driver,seats,dest,time_slot,departed=False,passengers=None):
         self.id = val_present(id)
         self.driver = val_present(driver)
-        self.seats = val_int_in_range(seats,1,4)
+        self.seats = val_int_in_range(seats,1,4,"seats")
         self.dest = val_dest(dest)
         self.time_slot = val_slot(time_slot)
         self.departed = departed
         self.passengers = list(passengers or [])
-        if len(self.passengers) > seats:
-            ValError(f"passenger capacity exceeded, have {len(self.passengers)} need {seats}")
+        if len(self.passengers) > self.seats:
+            raise ValError(f"passenger capacity exceeded, have {len(self.passengers)} max {self.seats}")
 
    
     def dispatch(self,riders):

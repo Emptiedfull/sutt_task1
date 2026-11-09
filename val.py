@@ -13,19 +13,20 @@ def val_year(value):
    
     return val_int_in_range(value,1,5,"year")
 
-def val_int_in_range(value,min,max,label=None):
-
-    if type(value) == int:
-        if value in range(min,max+1):
-                return value
-
-    if not value.isdigit() :
+def val_int_in_range(value,min,max,label="value"):
+    if isinstance(value, bool):
         raise ValError(f"Invalid type for {label}")
-    if int(value) in range(min,max+1):
-        return value
+    if isinstance(value, int):
+        num = value
+    elif isinstance(value, str) and value.strip().isdecimal():
+        num = int(value.strip())
     else:
-        raise ValError(f"Invalid Value for {label}")
-         
+        raise ValError(f"Invalid type for {label}")
+
+    if not (min <= num <= max):
+        raise ValError(f"{label} must be between {min} and {max}")
+    return num
+
 
 def val_dest(value):
     clean = value.strip().lower()

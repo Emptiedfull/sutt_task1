@@ -2,7 +2,7 @@ from models import Cab,RideRequest
 from val import ValError,val_present,val_dest,val_slot,val_year
 from loader import load_cabs
 from collections import defaultdict
-from queue import Ride_queue as Queue
+from queue import Old_queue as Queue
 
 def prompt(q,val):
     while True: 
@@ -19,7 +19,8 @@ class App:
         self.inc = 1
         pass
 
-    
+    def find_cab(self,trip):
+        return next((c for c in self.cabs if c.open and c.trip == trip), None)
 
     def add_request(self):
         name = prompt("Name: ",val_present)
@@ -95,7 +96,23 @@ class App:
            self.dispatch_cab(cab)
 
 
-       
+
+
+    def dispatch_trip(self):
+        dest = prompt("Destination (Delhi/Jaipur): ",val_dest)
+        slot = prompt("Timeslot (Morning/Afternoon/Evening/Night): ",val_slot)
+        trip = (dest,slot)
+
+        queue = self.waiting.get(trip)
+        if not queue:
+            print(" No passengers for selected trip")
+            return
+
+        cab = self.find_cab(trip)
+        if cab is None:
+            print(f" No open cabs for selected trip")
+            return
+        self.dispatch_cab(cab)
 
     def dispatch_cab(self,cab):
         queue = self.waiting.get(cab.trip)
@@ -109,7 +126,8 @@ class App:
             ("Request Ride", self.add_request),
             ("View Queue", self.show_status),
             ["Match cabs",self.match_preview],
-            ["Send cab",self.force_send]
+            ["Send cab",self.force_send],
+            ["Send trip",self.dispatch_trip]
         ]
 
     def run(self):
