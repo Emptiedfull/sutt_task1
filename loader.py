@@ -19,4 +19,5 @@ def load_cabs():
 
             if cab.id not in ids:
                 cabs.append(cab)
+                ids.append(cab.id)
         return cabs

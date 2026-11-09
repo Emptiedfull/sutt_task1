@@ -2,7 +2,7 @@ from models import Cab,RideRequest
 from val import ValError,val_present,val_dest,val_slot,val_year
 from loader import load_cabs
 from collections import defaultdict
-from queue import Old_queue as Queue
+from ride import Old_queue as Queue
 
 def prompt(q,val):
     while True: 
@@ -34,6 +34,11 @@ class App:
         # self.waiting.append(req)
         self.waiting[req.trip].push(req)
 
+
+        if not any(c.open for c in self.cabs):
+            print(" Note: every cab has already left. ")
+        elif self.find_cab(req.trip) is None:
+            print(f" Note: no open cab for {dest}, {slot}. ")
 
 
         print(f"added {req}")
@@ -73,7 +78,7 @@ class App:
                 for r in riders:
                     print(f"      would take: {r}")
             else: 
-                print(f"      no waiting")
+                print(f"      no waiting/taken")
 
     def force_send(self):
         open_cabs = {c.id.lower(): c for c in self.cabs if c.open}
@@ -134,15 +139,15 @@ class App:
         self.cabs = load_cabs()
         opts = self.menu_ops()
         
+        quit_num = len(opts) + 1
+
         print(" ---Welcome---- ")
-        
-        for i,(label,_) in enumerate(opts,1):
-            print(f"{i}. {label}")
-        quit_num = i + 1
-        print(f"\n{quit_num}. Quit \n")
 
         while True:
-           
+            print()
+            for i,(label,_) in enumerate(opts,1):
+                print(f"{i}. {label}")
+            print(f"{quit_num}. Quit \n")
 
             choice = input("> ").strip()
 

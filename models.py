@@ -49,7 +49,7 @@ class Cab:
 
     @property
     def open(self):
-        return len(self.passengers) == 0 and not self.departed
+        return not self.departed
 
     def __str__(self):
         stat = "LEFT" if self.departed else "OPEN"
