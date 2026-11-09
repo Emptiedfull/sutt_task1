@@ -31,6 +31,26 @@ class Cab:
         if len(self.passengers) > seats:
             ValError(f"passenger capacity exceeded, have {len(self.passengers)} need {seats}")
 
+   
+    def dispatch(self,riders):
+        if self.departed:
+            raise RuntimeError(f"Cab {self.id} has departed already")
+        else:
+            self.passengers.extend(riders)
+            self.departed = True
+
+    @property
+    def trip(self):
+            return (self.dest,self.time_slot)
+
+    @property
+    def free_seats(self):
+        return self.seats - len(self.passengers)
+
+    @property
+    def open(self):
+        return len(self.passengers) == 0 and not self.departed
+
     def __str__(self):
         stat = "LEFT" if self.departed else "OPEN"
         return (f"[{self.id}] {self.driver:<10} {self.dest}, {self.time_slot:<9} " f"{len(self.passengers)}/{self.seats}  {stat}")

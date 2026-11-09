@@ -2,7 +2,7 @@ from models import Cab,RideRequest
 from val import ValError,val_present,val_dest,val_slot,val_year
 from loader import load_cabs
 from collections import defaultdict
-from queue import Queue
+from queue import Ride_queue as Queue
 
 def prompt(q,val):
     while True: 
@@ -30,28 +30,86 @@ class App:
 
         req = RideRequest(name,dest,slot,year,self.inc)
         self.inc += 1
-        self.waiting.append(req)
-        self.waiting[req.trip]
+        # self.waiting.append(req)
+        self.waiting[req.trip].push(req)
+
+
 
         print(f"added {req}")
 
     def show_status(self):
         print("-> Waiting")
-        if not self.waiting:
-            print("None")
-        for r in self.waiting:
-            print(" ",r)
 
+        for trip,queue in self.waiting.items():
+           
+            print(f" {trip[0]},{trip[1]} ({len(queue)} waiting)")
+            for pos, r in enumerate(queue.list(), 1):
+                    print(f"    {pos}. {r}")
+       
         print("-> Cabs")
         if not self.cabs:
             print("None")
         for cab in self.cabs:
             print(" ",cab)
 
+    def match_preview(self):
+        open_cabs = [c for c in self.cabs if c.open]
+        if not open_cabs:
+            print("NO OPEN CABS")
+            return
+
+        taken = defaultdict(int)
+
+        for cab in open_cabs:
+            queue = self.waiting.get(cab.trip)
+            start = taken[cab.trip]
+            riders = queue.preview(start + cab.free_seats)[start:] if queue else []
+            taken[cab.trip] += len(riders)
+
+            print(f"  {cab}")
+
+            if riders:
+                for r in riders:
+                    print(f"      would take: {r}")
+            else: 
+                print(f"      no waiting")
+
+    def force_send(self):
+        open_cabs = {c.id.lower(): c for c in self.cabs if c.open}
+        if not open_cabs:
+                   print("NO OPEN CABS")
+                   return
+
+        print("-> OPEN CABS")
+        for c in open_cabs.values():
+            print(" ",c)
+
+        def pick(raw):
+            cab = open_cabs.get(raw.strip().lower())
+            if cab is None:
+                raise ValError(f"No open cab with id {raw}")
+            return cab
+
+        cab = prompt("Select cab id: ", pick)
+        if cab:
+           self.dispatch_cab(cab)
+
+
+       
+
+    def dispatch_cab(self,cab):
+        queue = self.waiting.get(cab.trip)
+        riders = queue.pop(cab.free_seats) if queue else []
+        cab.dispatch(riders)
+
+        print(f" Cab {cab.id} ({cab.driver}) left for {cab.dest} ")
+
     def menu_ops(self):
         return [
             ("Request Ride", self.add_request),
             ("View Queue", self.show_status),
+            ["Match cabs",self.match_preview],
+            ["Send cab",self.force_send]
         ]
 
     def run(self):

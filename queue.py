@@ -1,7 +1,7 @@
 from collections import deque
 from itertools import islice
 
-class ride_queue:
+class Ride_queue:
     def __init__(self):
         self.items = deque()
 
@@ -9,10 +9,10 @@ class ride_queue:
         self.items.append(item)
 
     def preview(self,n):
-         return list(islice(self._items, k))
+         return list(islice(self.items, n))
 
     def pop(self,n):
-         return [self._items.popleft() for _ in range(min(n, len(self._items)))]
+         return [self._items.popleft() for _ in range(min(n, len(self.items)))]
 
     def list(self):
         return list(self.items)
