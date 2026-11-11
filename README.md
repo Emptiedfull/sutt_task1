@@ -41,3 +41,14 @@ If a request is added which has no corresponding cab available, they are shown a
 ### 3. Same year
 Each request contains a unique incrementing number, in the queue tuple this is stored in the second position after the students year. Therefore if 2 students are in the same year, this number is compared next. As the request which was made first is lower it will be selected first and given priority. 
 
+### Time complexitieis 
+
+| Operation | Cost | Why |
+|---|---|---|
+| Add one request | O(log n) | Pushing to a heap is O(log n)|
+| Add all 1,000 requests | O(n log n) | 1000 pushes  of O(log n) each|
+| Send one cab | O(C + log n) | Finding the cab is O(C). popping from a heap is O(log n) and 4 pops is still O(log n) |
+| Find an open cab for a trip | O(C) | Its a linear scan|
+
+Here n is the number of students and C is the no of cabs
+
