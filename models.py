@@ -12,6 +12,13 @@ class RideRequest:
         self.timestamp = timestamp or datetime.now().isoformat(timespec="seconds")
         pass
 
+    @classmethod
+    def from_dict(r,d):
+        return r(d["name"], d["dest"], d["time_slot"], d["year"], d["inc"], d["timestamp"])
+
+    def to_dict(self):
+        return {"name":self.name,"dest":self.dest,"time_slot": self.time_slot,"year":self.year,"inc":self.inc,"timestamp":self.timestamp}
+
     @property
     def trip(self):
         return (self.dest,self.time_slot)
@@ -31,6 +38,16 @@ class Cab:
         if len(self.passengers) > self.seats:
             raise ValError(f"passenger capacity exceeded, have {len(self.passengers)} max {self.seats}")
 
+    @classmethod 
+    def from_dict(c,d):
+        passengers = [RideRequest.from_dict(p) for p in d.get("passengers",[])]
+        return c(d["id"],d["driver"],d["seats"],d["destination"],d["time_slot"],departed=bool(d.get("departed",False)),passengers=passengers)
+
+    def to_dict(self):
+        return {"id": self.id, "driver": self.driver, "seats": self.seats,
+                "destination": self.dest, "time_slot": self.time_slot,
+                "departed": self.departed,
+                "passengers": [p.to_dict() for p in self.passengers]}
    
     def dispatch(self,riders):
         if self.departed:

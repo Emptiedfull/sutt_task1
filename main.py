@@ -1,6 +1,6 @@
 from models import Cab,RideRequest 
 from val import ValError,val_present,val_dest,val_slot,val_year
-from loader import load_cabs
+from loader import load_cabs,save_state,load_state
 from collections import defaultdict
 from ride import Old_queue as Queue
 
@@ -17,7 +17,8 @@ class App:
         self.cabs = []
         self.waiting = defaultdict(Queue)
         self.inc = 1
-        pass
+
+        self.Load_State()
 
     def find_cab(self,trip):
         return next((c for c in self.cabs if c.open and c.trip == trip), None)
@@ -42,6 +43,7 @@ class App:
 
 
         print(f"added {req}")
+        save_state(self)
 
     def show_status(self):
         print("-> Waiting")
@@ -79,6 +81,7 @@ class App:
                     print(f"      would take: {r}")
             else: 
                 print(f"      no waiting/taken")
+       
 
     def force_send(self):
         open_cabs = {c.id.lower(): c for c in self.cabs if c.open}
@@ -99,7 +102,7 @@ class App:
         cab = prompt("Select cab id: ", pick)
         if cab:
            self.dispatch_cab(cab)
-
+        save_state(self)
 
 
 
@@ -118,6 +121,7 @@ class App:
             print(f" No open cabs for selected trip")
             return
         self.dispatch_cab(cab)
+        save_state(self)
 
     def dispatch_cab(self,cab):
         queue = self.waiting.get(cab.trip)
@@ -125,6 +129,7 @@ class App:
         cab.dispatch(riders)
 
         print(f" Cab {cab.id} ({cab.driver}) left for {cab.dest} ")
+        save_state(self)
 
     def menu_ops(self):
         return [
@@ -135,8 +140,19 @@ class App:
             ["Send trip",self.dispatch_trip]
         ]
 
+    def Load_State(self):
+        state = load_state()
+        if state:
+            self.cabs,waiting,self.inc = state
+            for r in waiting:
+                self.waiting[r.trip].push(r)
+            print("loaded from state.json")
+        else:
+            self.cabs = load_cabs()
+
+
     def run(self):
-        self.cabs = load_cabs()
+       
         opts = self.menu_ops()
         
         quit_num = len(opts) + 1
